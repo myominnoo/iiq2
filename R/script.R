@@ -76,7 +76,9 @@ fig_ps_cas <- dplyr::bind_rows(
 	ggplot(aes(x = name, y = n)) +  
 	geom_bar(aes(fill = name), stat = "identity", show.legend = FALSE) + 
 	geom_text(aes(label = label), size = 4, fontface = "bold", vjust = -0.5) + 
-	labs(x = "MOBILIZATION AND PRE-SCREENING CASCADE", y = "Count")
+	scale_y_continuous(limits = c(0, 720)) +
+	labs(x = "", y = "Count",
+			 title = "Mobilization and Pre-screening Cascade")
 fig_ps_cas
 	
 
@@ -84,7 +86,7 @@ fig_ps_elim <- ps |>
 	dplyr::filter(is.na(prescreened)) |> 
 	dplyr::mutate(
 		reasons_no_ps = forcats::fct_infreq(reasons_no_ps),
-		reasons_no_ps = forcats::fct_lump_n(reasons_no_ps, 20), 
+		reasons_no_ps = forcats::fct_lump_n(reasons_no_ps, 10), 
 		reasons_no_ps = forcats::fct_rev(reasons_no_ps)
 	) |> 
 	dplyr::count(reasons_no_ps) |> 
@@ -92,9 +94,10 @@ fig_ps_elim <- ps |>
 	ggplot(aes(x = n, y = reasons_no_ps)) + 
 	geom_col(aes(fill = reasons_no_ps), show.legend = FALSE) + 
 	geom_text(aes(label = n), hjust = -0.25) + 
+	scale_x_continuous(limits = c(0, 150)) +
 	labs(y = "", x = "Count", 
 			 title = paste0(
-			 	"Reasons for non-eligiblity (N = ", 
+			 	"Reasons for non-eligiblity\n(N = ", 
 			 	(ps |> filter(is.na(prescreened)) |> nrow()), ")"
 			 ))
 fig_ps_elim
@@ -188,7 +191,7 @@ fig_lab <- purrr::map(c("RPR", "CT", "NG", "TV", "BV"), function(x) {
 						position = position_stack(vjust = 0.5)) +
 	labs(x = NULL, y = "Count") + 
 	facet_grid(~ source, switch = "both") + 
-	theme(legend.position = "bottom", 
+	theme(legend.position = "right", 
 				strip.placement = "outside")
 fig_lab
 
