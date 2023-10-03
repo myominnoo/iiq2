@@ -185,12 +185,12 @@ fig_lab <- purrr::map(c("RPR", "CT", "NG", "TV", "BV"), function(x) {
 	ggplot(aes(x = test, y = n)) + 
 	geom_col(aes(fill = result), color = "black", size = .2) + 
 	geom_text(aes(label = n, group = result),
-						position = position_stack(vjust = 0.5)) + 
+						position = position_stack(vjust = 0.5)) +
 	labs(x = NULL, y = "Count") + 
 	facet_grid(~ source, switch = "both") + 
 	theme(legend.position = "bottom", 
 				strip.placement = "outside")
-
+fig_lab
 
 
 

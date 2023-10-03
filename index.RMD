@@ -1,0 +1,35 @@
+---
+title: "The MalCon Monitoring Dashboard: Health Facility Survey `2021`"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r setup, include=FALSE}
+source("R/script.R")
+library(flexdashboard)
+```
+Row {data-height=650}
+-------------------------------------
+
+### Chart 1
+
+```{r}
+fig_ps_cas
+```
+
+### Chart 2
+
+```{r}
+fig_ps_elim
+```
+
+
+Row {data-height=350}
+-------------------------------------
+
+### Chart 3
+
+```{r}
+fig_ra
+```
