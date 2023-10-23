@@ -43,3 +43,10 @@ fig_ra
 ```{r, fig.width=20, fig.height=7}
 fig_lab
 ```
+
+### #4 Cascade of Lab Results
+
+
+```{r, fig.width=10, fig.height=7}
+fig_retest
+```

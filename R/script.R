@@ -157,8 +157,18 @@ lab <- purrr::map(lab_sheets, function(x) {
 	} else {
 		df <- googlesheets4::read_sheet(gs_name, sheet = x, skip = 1)
 	}
+	if (x == "Prescreening") {
+		df <- df |> 
+			# glimpse() |> 
+			dplyr::select(pid = 2, RPR, CT, NG, TV, BV, mlnum = `ML Number`, 
+										enroll = `Enroll?`, enrolled = `Enrolment Status`) 
+	} else {
+		df <- df |> 
+			dplyr::select(pid = 2, RPR, CT, NG, TV, BV) 
+	}
+	
 	df |> 
-		dplyr::select(pid = 2, RPR, CT, NG, TV, BV) |> 
+		# dplyr::glimpse() |>
 		dplyr::mutate(
 			source = x, 
 			across(RPR:BV, ~ if_else(.x == "-", NA, .x)), 
@@ -200,9 +210,45 @@ fig_lab <- purrr::map(c("RPR", "CT", "NG", "TV", "BV"), function(x) {
 fig_lab
 
 
+fig_retest <- lab |> 
+	filter(source == "Prescreening") |> 
+	mutate(retest = case_when(
+		grepl("R", mlnum) ~ "Yes", 
+		TRUE ~ "No"
+		),
+		retest = paste0("Retested: ", retest),
+		enroll_id = enrolled, 
+		enrolled = if_else(is.na(enrolled), "No", "Yes"), 
+		enroll = if_else(is.na(enroll), "Missing", enroll),
+		enroll = factor(enroll, c("Yes", "No", "Missing")),
+		enrolled = if_else(enrolled == "Yes", "Enrolled", "Not Enrolled")
+	) |> 
+	count(retest, enroll, enrolled) |> 
+	group_by(retest, enroll) |> 
+	mutate(
+		N = sum(n), 
+		pct = n / N, 
+		label = scales::label_percent(accuracy = 0.1)(pct), 
+		label = paste0(n, ", ", label)
+	) |> 
+	ungroup() |> 
+	ggplot(aes(x = enroll, y = pct)) +
+	geom_col(aes(fill = enrolled)) +
+	facet_grid(~ retest) +
+	ggrepel::geom_label_repel(
+		aes(label = label, 
+				fill = enrolled)
+	) + 
+	scale_y_continuous(
+		limits = c(0, 1), 
+		labels = scales::label_percent()
+	) + 
+	labs(x = "Percentage",
+			 y = "Qualified", 
+			 title = "Retest Cascade")
+
+
 
 	
-	
-
 
 
